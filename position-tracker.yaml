@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-tracker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: position-tracker
+  template:
+    metadata:
+      labels:
+        app: position-tracker
+    spec:
+      containers:
+        - name: position-tracker
+          image: richardchesterwood/k8s-fleetman-position-tracker:release2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: fleetman.position.queue
+              valueFrom:
+                configMapKeyRef:
+                  name: fleetman-config
+                  key: fleetman-position-queue
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: position-tracker
+spec:
+  selector:
+    app: position-tracker
+  ports:
+    - port: 8080
+      targetPort: 8080

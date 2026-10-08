@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fleetman-api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fleetman-api-gateway
+  template:
+    metadata:
+      labels:
+        app: fleetman-api-gateway
+    spec:
+      containers:
+        - name: fleetman-api-gateway
+          image: richardchesterwood/k8s-fleetman-api-gateway:release2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: position-tracker-url
+              valueFrom:
+                configMapKeyRef:
+                  name: fleetman-config
+                  key: position-tracker-url
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-api-gateway
+spec:
+  selector:
+    app: fleetman-api-gateway
+  ports:
+    - port: 8080
+      targetPort: 8080

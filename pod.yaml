@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+spec:
+  containers:
+    - name: webapp
+      image: richardchesterwood/k8s-fleetman-webapp-angular:release2
+      ports:
+        - containerPort: 80
+      env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: local-microservice

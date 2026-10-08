@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fleetman-config
+data:
+  position-tracker-url: "position-tracker:8080"
+  fleetman-position-queue: "fleet-tracking"
