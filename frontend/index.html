@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleetman | Gestion intelligente de flotte</title>
+    <meta name="description" content="Tableau de bord Fleetman pour le suivi GPS et la gestion des véhicules.">
+    <title>Fleetman | Gestion de flotte</title>
 
     <link rel="preconnect" href="https://unpkg.com">
     <link rel="preconnect" href="https://tile.openstreetmap.org">
 
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
@@ -27,17 +28,17 @@
         }
 
         .sidebar {
-            width: 250px;
+            width: 240px;
+            flex-shrink: 0;
+            padding: 28px 18px;
             background: #14213d;
             color: white;
-            padding: 28px 20px;
-            flex-shrink: 0;
         }
 
         .brand {
+            margin-bottom: 38px;
             font-size: 25px;
             font-weight: bold;
-            margin-bottom: 45px;
         }
 
         .brand span {
@@ -45,32 +46,28 @@
         }
 
         .menu-title {
+            margin: 24px 0 12px;
             color: #91a4c4;
             font-size: 11px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 25px 0 12px;
         }
 
         .menu-item {
             display: block;
             width: 100%;
-            padding: 13px 14px;
             margin-bottom: 7px;
+            padding: 12px;
             border: 0;
             border-radius: 8px;
-            color: #d8e1f0;
             background: transparent;
-            font-size: 14px;
+            color: #d8e1f0;
             text-align: left;
+            font-size: 14px;
             cursor: pointer;
-            transition: background .2s;
         }
 
-        .menu-item:hover {
-            background: #263754;
-        }
-
+        .menu-item:hover,
         .menu-item.active {
             background: #2563eb;
             color: white;
@@ -87,26 +84,27 @@
             justify-content: space-between;
             align-items: center;
             gap: 16px;
-            margin-bottom: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
         }
 
-        .topbar h1 {
-            font-size: 27px;
+        h1 {
             margin-bottom: 8px;
+            font-size: 27px;
         }
 
-        .subtitle {
+        .subtitle,
+        .muted {
             color: #748096;
             font-size: 14px;
         }
 
         .status {
-            background: #dcfce7;
-            color: #166534;
             padding: 10px 14px;
             border-radius: 20px;
+            background: #e0f2fe;
+            color: #075985;
             font-size: 13px;
-            white-space: nowrap;
         }
 
         .stats {
@@ -116,24 +114,28 @@
             margin-bottom: 25px;
         }
 
-        .card {
-            background: white;
-            padding: 23px;
-            border-radius: 14px;
+        .card,
+        .section {
             border: 1px solid #e7ebf2;
+            border-radius: 14px;
+            background: white;
             box-shadow: 0 4px 15px rgba(20, 33, 61, .03);
         }
 
+        .card {
+            padding: 22px;
+        }
+
         .stat-label {
+            margin-bottom: 15px;
             color: #748096;
             font-size: 13px;
-            margin-bottom: 17px;
         }
 
         .stat-value {
-            font-size: 30px;
-            font-weight: bold;
             margin-bottom: 8px;
+            font-size: 29px;
+            font-weight: bold;
         }
 
         .stat-note {
@@ -147,11 +149,8 @@
         .purple { color: #7c3aed; }
 
         .section {
-            background: white;
-            border: 1px solid #e7ebf2;
-            border-radius: 14px;
-            padding: 24px;
             margin-bottom: 25px;
+            padding: 24px;
         }
 
         .section-header {
@@ -160,27 +159,27 @@
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .section-header h2 {
+            margin-bottom: 6px;
             font-size: 18px;
         }
 
         .section-header p {
             color: #748096;
-            font-size: 12px;
-            margin-top: 6px;
+            font-size: 13px;
         }
 
         .action-button {
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 8px;
             background: #2563eb;
             color: white;
-            border: 0;
-            padding: 10px 14px;
-            border-radius: 8px;
-            cursor: pointer;
             font-size: 13px;
+            cursor: pointer;
         }
 
         .action-button:hover {
@@ -188,17 +187,17 @@
         }
 
         #fleetMap {
-            height: 430px;
             width: 100%;
+            height: 400px;
+            overflow: hidden;
             border-radius: 10px;
             background: #e8eef5;
-            overflow: hidden;
         }
 
         .map-help {
+            margin-top: 12px;
             color: #748096;
             font-size: 12px;
-            margin-top: 12px;
         }
 
         .table-wrapper {
@@ -209,47 +208,42 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            white-space: nowrap;
+        }
+
+        caption {
+            padding: 12px;
+            color: #526078;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e7ebf2;
+            font-size: 13px;
         }
 
         th {
             color: #748096;
             font-size: 12px;
-            font-weight: 600;
-            padding: 14px 12px;
-            border-bottom: 1px solid #e7ebf2;
-        }
-
-        td {
-            padding: 17px 12px;
-            border-bottom: 1px solid #f0f2f6;
-            font-size: 13px;
-        }
-
-        .vehicle-name {
-            font-weight: bold;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            background: #dcfce7;
-            color: #166534;
         }
 
         .empty-message {
+            padding: 24px;
             color: #748096;
             text-align: center;
-            padding: 25px;
         }
 
         .footer {
-            text-align: center;
+            padding: 12px;
             color: #8a94a6;
             font-size: 12px;
-            padding: 10px;
+            text-align: center;
+        }
+
+        [hidden] {
+            display: none !important;
         }
 
         @media (max-width: 1100px) {
@@ -259,18 +253,25 @@
         }
 
         @media (max-width: 700px) {
+            .layout {
+                display: block;
+            }
+
             .sidebar {
-                width: 190px;
-                padding: 20px 12px;
+                width: 100%;
+                padding: 18px;
+            }
+
+            .brand {
+                margin-bottom: 15px;
+            }
+
+            .menu-title {
+                margin-top: 15px;
             }
 
             .main {
                 padding: 18px;
-            }
-
-            .topbar {
-                align-items: flex-start;
-                flex-direction: column;
             }
 
             .stats {
@@ -278,13 +279,7 @@
             }
 
             #fleetMap {
-                height: 320px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .sidebar {
-                display: none;
+                height: 300px;
             }
         }
     </style>
@@ -292,18 +287,17 @@
 
 <body>
 <div class="layout">
-
     <aside class="sidebar">
         <div class="brand">Fleet<span>man.</span></div>
 
         <div class="menu-title">Espace principal</div>
-        <button class="menu-item active" data-page="dashboard">▦ Tableau de bord</button>
-        <button class="menu-item" data-page="vehicles">🚚 Véhicules</button>
-        <button class="menu-item" data-page="map">📍 Suivi GPS</button>
-        <button class="menu-item" data-page="history">📊 Historique des trajets</button>
+        <button class="menu-item active" data-page="dashboard">Tableau de bord</button>
+        <button class="menu-item" data-page="vehicles">Véhicules</button>
+        <button class="menu-item" data-page="map">Suivi GPS</button>
+        <button class="menu-item" data-page="history">Historique des trajets</button>
 
         <div class="menu-title">Administration</div>
-        <button class="menu-item" data-page="settings">⚙ Paramètres</button>
+        <button class="menu-item" data-page="settings">Paramètres</button>
     </aside>
 
     <main class="main">
@@ -312,33 +306,35 @@
                 <h1 id="pageTitle">Tableau de bord</h1>
                 <p class="subtitle">Vue d'ensemble de votre flotte en temps réel</p>
             </div>
-            <div class="status" id="connectionStatus">● Connexion en cours...</div>
+            <div class="status" id="connectionStatus" role="status" aria-live="polite">
+                Connexion en cours...
+            </div>
         </header>
 
-        <section class="stats" id="dashboardStats">
-            <div class="card">
+        <section class="stats" id="dashboardStats" aria-label="Statistiques de la flotte">
+            <article class="card">
                 <div class="stat-label">Véhicules recensés</div>
                 <div class="stat-value blue" id="totalVehicles">--</div>
                 <div class="stat-note">Véhicules connus du système</div>
-            </div>
+            </article>
 
-            <div class="card">
+            <article class="card">
                 <div class="stat-label">Positions disponibles</div>
                 <div class="stat-value green" id="positionCount">--</div>
                 <div class="stat-note">Coordonnées GPS enregistrées</div>
-            </div>
+            </article>
 
-            <div class="card">
+            <article class="card">
                 <div class="stat-label">Service de suivi</div>
                 <div class="stat-value orange" id="trackerStatus">--</div>
-                <div class="stat-note">État de la récupération des données</div>
-            </div>
+                <div class="stat-note">État de récupération des données</div>
+            </article>
 
-            <div class="card">
+            <article class="card">
                 <div class="stat-label">Dernière actualisation</div>
                 <div class="stat-value purple" id="lastUpdate">--:--</div>
                 <div class="stat-note">Heure locale</div>
-            </div>
+            </article>
         </section>
 
         <section class="section" id="mapSection">
@@ -347,12 +343,12 @@
                     <h2>Localisation de la flotte</h2>
                     <p>Positions GPS des véhicules enregistrés dans Fleetman</p>
                 </div>
-                <button class="action-button" id="refreshButton">↻ Actualiser</button>
+                <button class="action-button" id="refreshButton">Actualiser</button>
             </div>
 
-            <div id="fleetMap"></div>
+            <div id="fleetMap" role="region" aria-label="Carte de localisation des véhicules"></div>
             <p class="map-help">
-                Clique sur un marqueur de camion pour consulter ses informations.
+                Sélectionnez un marqueur pour consulter les informations du véhicule.
                 La carte utilise OpenStreetMap.
             </p>
         </section>
@@ -361,20 +357,23 @@
             <div class="section-header">
                 <div>
                     <h2>Véhicules de la flotte</h2>
-                    <p>Liste actualisée automatiquement depuis le backend Fleetman</p>
+                    <p>Liste actualisée depuis le backend Fleetman</p>
                 </div>
                 <button class="action-button" id="vehiclesButton">Afficher les véhicules</button>
             </div>
 
             <div class="table-wrapper">
                 <table>
+                    <caption>
+                        Véhicules, coordonnées GPS, vitesse et statut des données de suivi.
+                    </caption>
                     <thead>
                     <tr>
-                        <th>VÉHICULE</th>
-                        <th>LATITUDE</th>
-                        <th>LONGITUDE</th>
-                        <th>VITESSE</th>
-                        <th>STATUT DES DONNÉES</th>
+                        <th scope="col">VÉHICULE</th>
+                        <th scope="col">LATITUDE</th>
+                        <th scope="col">LONGITUDE</th>
+                        <th scope="col">VITESSE</th>
+                        <th scope="col">STATUT DES DONNÉES</th>
                     </tr>
                     </thead>
                     <tbody id="vehicleTable">
@@ -407,4 +406,3 @@
 <script src="app.js"></script>
 </body>
 </html>
-
