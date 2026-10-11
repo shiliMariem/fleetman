@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fleetman-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fleetman-dashboard
+  template:
+    metadata:
+      labels:
+        app: fleetman-dashboard
+    spec:
+      containers:
+        - name: fleetman-dashboard
+          image: fleetman-dashboard:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+            limits:
+              cpu: "250m"
+              memory: "128Mi"
+
