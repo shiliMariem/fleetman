@@ -168,6 +168,16 @@ function renderVehicles() {
 }
 
 async function loadVehicles() {
+    const refreshButton = $("refreshButton");
+
+    if (refreshButton?.disabled) return;
+
+    if (refreshButton) {
+        refreshButton.disabled = true;
+        refreshButton.textContent = "Actualisation…";
+        refreshButton.setAttribute("aria-busy", "true");
+    }
+
     try {
         const response = await fetch(`${API}/vehicles/`, {
             cache: "no-store"
@@ -191,6 +201,12 @@ async function loadVehicles() {
         setConnectionStatus(false, "Indisponible");
     } finally {
         updateTime();
+
+        if (refreshButton) {
+            refreshButton.disabled = false;
+            refreshButton.textContent = "Actualiser";
+            refreshButton.removeAttribute("aria-busy");
+        }
     }
 }
 
